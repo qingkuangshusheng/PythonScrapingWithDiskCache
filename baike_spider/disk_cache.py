@@ -3,6 +3,7 @@ import re
 import urlparse
 import shutil
 import zlib
+import hashlib
 from datetime import datetime, timedelta
 try:
     import cPickle as pickle
@@ -100,6 +101,7 @@ class DiskCache:
     def url_to_path(self, url):
         """Create file system path for this URL
         """
+        #第一种方法
         # components = urlparse.urlsplit(url)
         # when empty path set to /index.html
         #path = components.path
@@ -113,9 +115,16 @@ class DiskCache:
         # # restrict maximum number of characters
         # filename = '/'.join(segment[:255] for segment in filename.split('/'))
         # return os.path.join(self.cache_dir, filename)
+        #第二种
+        #filename=''
+        # for c in url:
+        #     filename+=str(ord(c))
+        # return os.path.join(self.cache_dir,filename)
+        #第三种
         filename=''
-        for c in url:
-            filename+=str(ord(c))
+        m=hashlib.md5()
+        m.update(url)
+        filename=m.hexdigest()
         return os.path.join(self.cache_dir,filename)
 
 
